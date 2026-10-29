@@ -6,6 +6,9 @@ import com.nisum.userapi.dto.UserResponse;
 import com.nisum.userapi.entity.User;
 import com.nisum.userapi.mapper.UserMapper;
 import com.nisum.userapi.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,6 +33,12 @@ public class UserController {
     private final UserService userService;
     private final UserMapper userMapper;
 
+    @Operation(summary = "Registrar un nuevo usuario")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Usuario creado correctamente"),
+        @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos"),
+        @ApiResponse(responseCode = "409", description = "El correo ya registrado")
+    })
     @PostMapping
     public ResponseEntity<UserResponse> createUser(
             @Valid @RequestBody UserRequest request) {
@@ -41,6 +50,12 @@ public class UserController {
                 .body(userMapper.toResponse(user));
     }
 
+    @Operation(summary = "Obtener un usuario por su UUID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Usuario encontrado"),
+        @ApiResponse(responseCode = "401", description = "No autorizado"),
+        @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+    })
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(
             @PathVariable UUID id) {
@@ -50,6 +65,14 @@ public class UserController {
         return ResponseEntity.ok(userMapper.toResponse(user));
     }
 
+    @Operation(summary = "Actualizar completamente un usuario")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Usuario actualizado correctamente"),
+        @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos"),
+        @ApiResponse(responseCode = "401", description = "No autorizado"),
+        @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
+        @ApiResponse(responseCode = "409", description = "El correo ya registrado")
+    })
     @PutMapping("/{id}")
     public ResponseEntity<UserResponse> updateUser(
             @PathVariable UUID id,
@@ -62,6 +85,14 @@ public class UserController {
         );
     }
 
+    @Operation(summary = "Actualizar parcialmente un usuario")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Usuario actualizado parcialmente"),
+        @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos"),
+        @ApiResponse(responseCode = "401", description = "No autorizado"),
+        @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
+        @ApiResponse(responseCode = "409", description = "El correo ya registrado")
+    })
     @PatchMapping("/{id}")
     public ResponseEntity<UserResponse> patchUser(
             @PathVariable UUID id,
@@ -74,6 +105,12 @@ public class UserController {
         );
     }
 
+    @Operation(summary = "Eliminar un usuario por su UUID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "Usuario eliminado correctamente"),
+        @ApiResponse(responseCode = "401", description = "No autorizado"),
+        @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
 
